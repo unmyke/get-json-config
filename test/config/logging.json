@@ -1,0 +1,14 @@
+{
+  "development": {
+    "path": "./logs/development.log",
+    "mode": "debug"
+  },
+  "production": {
+    "path": "./logs/production.log",
+    "mode": "warning"
+  },
+  "test": {
+    "path": "./logs/test.log",
+    "mode": "info"
+  }
+}

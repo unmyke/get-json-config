@@ -1,0 +1,14 @@
+{
+  "development": {
+    "host": "db.localhost",
+    "port": 27017
+  },
+  "production": {
+    "host": "db.localhost",
+    "port": 27017
+  },
+  "test": {
+    "host": "db.test.localhost",
+    "port": 27017
+  }
+}

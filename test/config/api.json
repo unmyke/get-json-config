@@ -1,0 +1,17 @@
+{
+  "development": {
+    "host": "localhost",
+    "port": 4000,
+    "uri": "/api"
+  },
+  "production": {
+    "host": "localhost",
+    "port": 4000,
+    "uri": "/api"
+  },
+  "test": {
+    "host": "api.test.localhost",
+    "port": 4000,
+    "uri": "/api"
+  }
+}
