@@ -1,29 +1,63 @@
-const path = require('path');
-const getAllConfigs = require('./get-all-configs');
+const { resolve } = require('path');
+const getFullConfig = require('./get-full-config');
+const {
+  codes: { DIR_NOT_FOUND },
+} = require('./error');
 
 const getJsonConfig = (
-  names = [],
+  scopeNames = [],
   {
     env = process.env.NODE_ENV || 'development',
-    configDir = path.resolve(process.cwd(), './config'),
+    dir = resolve(process.cwd(), './config'),
   } = {}
 ) =>
-  getAllConfigs(configDir).then((configs) =>
-    names.reduce((targetConfigs, configName) => {
-      let config;
+  getFullConfig(dir)
+    .then((scopes) =>
+      scopeNames.reduce(
+        ({ config: prevConfig, files: prevFiles }, scopeName) => {
+          let scope;
+          let newFiles;
 
-      if (!configs[env] || !configs[env][configName]) {
-        console.warn(
-          `There are errors while reading config "${configName}" from ${configDir}. Return empty object.`
+          if (!scopes[env] || !scopes[env][scopeName]) {
+            const message = !scopes[env]
+              ? `Environment ${env} doesn't declare in scope files`
+              : `Config file "${scopeName}" doesn't exist in directory "${dir}"`;
+            console.warn(`${message}. Return empty object.`);
+            scope = {};
+            newFiles = [...prevFiles];
+          } else {
+            const { value, file } = scopes[env][scopeName];
+            scope = value;
+            newFiles = [...prevFiles, file];
+          }
+
+          return {
+            config: {
+              ...prevConfig,
+              [scopeName]: scope,
+            },
+            files: newFiles,
+          };
+        },
+        { config: {}, files: [] }
+      )
+    )
+    .catch((err) => {
+      if (err.code === DIR_NOT_FOUND) {
+        console.warn(err.message);
+        return scopeNames.reduce(
+          (prevConfig, scopeName) => ({
+            config: {
+              ...prevConfig.config,
+              [scopeName]: {},
+            },
+            files: [],
+          }),
+          { config: {} }
         );
-        config = {};
-      } else config = configs[env][configName];
+      }
 
-      return {
-        ...targetConfigs,
-        [configName]: config,
-      };
-    }, {})
-  );
+      throw err;
+    });
 
 module.exports = getJsonConfig;
