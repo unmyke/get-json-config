@@ -1,21 +1,41 @@
 const full = require('./full');
+const files = require('./files-partial');
 
-module.exports.development = {
-  api: full.development.api,
-  web: full.development.web,
+const development = {
+  api: full.development.config.api,
+  web: full.development.config.web,
 };
 
-module.exports.production = {
-  api: full.production.api,
-  web: full.production.web,
+const production = {
+  api: full.production.config.api,
+  web: full.production.config.web,
 };
 
-module.exports.test = {
-  api: full.test.api,
-  web: full.test.web,
+const test = {
+  api: full.test.config.api,
+  web: full.test.config.web,
 };
 
-module.exports.empty = {
+const empty = {
   api: {},
   web: {},
+};
+
+module.exports = {
+  development: {
+    config: development,
+    files,
+  },
+  production: {
+    config: production,
+    files,
+  },
+  test: {
+    config: test,
+    files,
+  },
+  empty: {
+    config: empty,
+    files: [],
+  },
 };

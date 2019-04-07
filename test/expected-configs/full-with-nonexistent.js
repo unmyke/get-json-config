@@ -1,22 +1,41 @@
 const full = require('./full');
 const nonexistent = require('./nonexistent');
 
-module.exports.development = {
-  ...full.development,
-  ...nonexistent,
+const development = {
+  ...full.development.config,
+  ...nonexistent.config,
 };
 
-module.exports.production = {
-  ...full.production,
-  ...nonexistent,
+const production = {
+  ...full.production.config,
+  ...nonexistent.config,
 };
 
-module.exports.test = {
-  ...full.test,
-  ...nonexistent,
+const test = {
+  ...full.test.config,
+  ...nonexistent.config,
 };
 
-module.exports.empty = {
-  ...full.empty,
-  ...nonexistent,
+const empty = {
+  ...full.empty.config,
+  ...nonexistent.config,
+};
+
+module.exports = {
+  development: {
+    config: development,
+    files: full.development.files,
+  },
+  production: {
+    config: production,
+    files: full.production.files,
+  },
+  test: {
+    config: test,
+    files: full.test.files,
+  },
+  empty: {
+    config: empty,
+    files: full.empty.files,
+  },
 };

@@ -1,22 +1,42 @@
 const partial = require('./partial');
 const nonexistent = require('./nonexistent');
+const files = require('./files-partial');
 
-module.exports.development = {
-  ...partial.development,
-  ...nonexistent,
+const development = {
+  ...partial.development.config,
+  ...nonexistent.config,
 };
 
-module.exports.production = {
-  ...partial.production,
-  ...nonexistent,
+const production = {
+  ...partial.production.config,
+  ...nonexistent.config,
 };
 
-module.exports.test = {
-  ...partial.test,
-  ...nonexistent,
+const test = {
+  ...partial.test.config,
+  ...nonexistent.config,
 };
 
-module.exports.empty = {
-  ...partial.empty,
-  ...nonexistent,
+const empty = {
+  ...partial.empty.config,
+  ...nonexistent.config,
+};
+
+module.exports = {
+  development: {
+    config: development,
+    files,
+  },
+  production: {
+    config: production,
+    files,
+  },
+  test: {
+    config: test,
+    files,
+  },
+  empty: {
+    config: empty,
+    files: [],
+  },
 };

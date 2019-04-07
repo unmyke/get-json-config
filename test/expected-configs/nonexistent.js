@@ -1,4 +1,4 @@
 module.exports = {
-  non: {},
-  existent: {},
+  config: { non: {}, existent: {} },
+  files: [],
 };

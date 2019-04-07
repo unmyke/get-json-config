@@ -10,12 +10,14 @@ const envs = {
   PROD: 'production',
   TEST: 'test',
 };
-const configDir = './test/config';
+const dir = './test/config';
 const nonexistentConfigDir = './config';
 
 describe('#async', () => {
   beforeEach(() => {
-    console.warn = jest.fn();
+    console.warn = jest.fn((message) => {
+      // warn(message);
+    });
   });
   afterEach(() => {
     console.warn = warn;
@@ -25,10 +27,10 @@ describe('#async', () => {
     context('takes all json config file names', () => {
       test('should return object contains configs from all json files per environment', () =>
         Promise.all([
-          getConfig(configSets.full, { configDir }),
-          getConfig(configSets.full, { env: envs.TEST, configDir }),
-          getConfig(configSets.full, { env: envs.DEV, configDir }),
-          getConfig(configSets.full, { env: envs.PROD, configDir }),
+          getConfig(configSets.full, { dir }),
+          getConfig(configSets.full, { env: envs.TEST, dir }),
+          getConfig(configSets.full, { env: envs.DEV, dir }),
+          getConfig(configSets.full, { env: envs.PROD, dir }),
         ]).then(([defaultConfig, testConfig, devConfig, prodConfig]) => {
           expect(defaultConfig).toEqual(
             expectedConfigs.full[process.env.NODE_ENV]
@@ -42,18 +44,18 @@ describe('#async', () => {
     context('takes all and nonexistent json config file names', () => {
       test('should return object contains configs from all json files and with props with empty object for nonexistent names per environment', () =>
         Promise.all([
-          getConfig(configSets.fullWithNonexistent, { configDir }),
+          getConfig(configSets.fullWithNonexistent, { dir }),
           getConfig(configSets.fullWithNonexistent, {
             env: envs.TEST,
-            configDir,
+            dir,
           }),
           getConfig(configSets.fullWithNonexistent, {
             env: envs.DEV,
-            configDir,
+            dir,
           }),
           getConfig(configSets.fullWithNonexistent, {
             env: envs.PROD,
-            configDir,
+            dir,
           }),
         ]).then(([defaultConfig, testConfig, devConfig, prodConfig]) => {
           expect(defaultConfig).toEqual(
@@ -69,17 +71,17 @@ describe('#async', () => {
             expectedConfigs.fullWithNonexistent[envs.PROD]
           );
 
-          expect(console.warn).toBeCalledTimes(8);
+          expect(console.warn).toBeCalledTimes(12);
         }));
     });
 
     context('takes partial json config file names', () => {
       test('should return object contains configs from partial json files per environment', () =>
         Promise.all([
-          getConfig(configSets.partial, { configDir }),
-          getConfig(configSets.partial, { env: envs.TEST, configDir }),
-          getConfig(configSets.partial, { env: envs.DEV, configDir }),
-          getConfig(configSets.partial, { env: envs.PROD, configDir }),
+          getConfig(configSets.partial, { dir }),
+          getConfig(configSets.partial, { env: envs.TEST, dir }),
+          getConfig(configSets.partial, { env: envs.DEV, dir }),
+          getConfig(configSets.partial, { env: envs.PROD, dir }),
         ]).then(([defaultConfig, testConfig, devConfig, prodConfig]) => {
           expect(defaultConfig).toEqual(
             expectedConfigs.partial[process.env.NODE_ENV]
@@ -93,35 +95,35 @@ describe('#async', () => {
     context('takes nonexistent json config file names', () => {
       test('should return object contains props as passed names with empty object per environment', () =>
         Promise.all([
-          getConfig(configSets.nonexistent, { configDir }),
-          getConfig(configSets.nonexistent, { env: envs.TEST, configDir }),
-          getConfig(configSets.nonexistent, { env: envs.DEV, configDir }),
-          getConfig(configSets.nonexistent, { env: envs.PROD, configDir }),
+          getConfig(configSets.nonexistent, { dir }),
+          getConfig(configSets.nonexistent, { env: envs.TEST, dir }),
+          getConfig(configSets.nonexistent, { env: envs.DEV, dir }),
+          getConfig(configSets.nonexistent, { env: envs.PROD, dir }),
         ]).then(([defaultConfig, testConfig, devConfig, prodConfig]) => {
           expect(defaultConfig).toEqual(expectedConfigs.nonexistent);
           expect(testConfig).toEqual(expectedConfigs.nonexistent);
           expect(devConfig).toEqual(expectedConfigs.nonexistent);
           expect(prodConfig).toEqual(expectedConfigs.nonexistent);
 
-          expect(console.warn).toBeCalledTimes(8);
+          expect(console.warn).toBeCalledTimes(12);
         }));
     });
 
     context('takes partial and nonexistent json config file names', () => {
       test('should return object contains configs from partial json files and with props with empty object for nonexistent names per environment', () =>
         Promise.all([
-          getConfig(configSets.partialWithNonexistent, { configDir }),
+          getConfig(configSets.partialWithNonexistent, { dir }),
           getConfig(configSets.partialWithNonexistent, {
             env: envs.TEST,
-            configDir,
+            dir,
           }),
           getConfig(configSets.partialWithNonexistent, {
             env: envs.DEV,
-            configDir,
+            dir,
           }),
           getConfig(configSets.partialWithNonexistent, {
             env: envs.PROD,
-            configDir,
+            dir,
           }),
         ]).then(([defaultConfig, testConfig, devConfig, prodConfig]) => {
           expect(defaultConfig).toEqual(
@@ -137,7 +139,7 @@ describe('#async', () => {
             expectedConfigs.partialWithNonexistent[envs.PROD]
           );
 
-          expect(console.warn).toBeCalledTimes(8);
+          expect(console.warn).toBeCalledTimes(12);
         }));
     });
   });
@@ -145,16 +147,16 @@ describe('#async', () => {
   context("config directory doesn't exists", () => {
     test('should return config object with empty object as requested props', () =>
       Promise.all([
-        getConfig(configSets.full, { configDir: nonexistentConfigDir }),
+        getConfig(configSets.full, { dir: nonexistentConfigDir }),
         getConfig(configSets.fullWithNonexistent, {
-          configDir: nonexistentConfigDir,
+          dir: nonexistentConfigDir,
         }),
-        getConfig(configSets.partial, { configDir: nonexistentConfigDir }),
+        getConfig(configSets.partial, { dir: nonexistentConfigDir }),
         getConfig(configSets.partialWithNonexistent, {
-          configDir: nonexistentConfigDir,
+          dir: nonexistentConfigDir,
         }),
         getConfig(configSets.nonexistent, {
-          configDir: nonexistentConfigDir,
+          dir: nonexistentConfigDir,
         }),
       ]).then(
         ([
@@ -174,7 +176,7 @@ describe('#async', () => {
           );
           expect(nonexistent).toEqual(expectedConfigs.nonexistent);
 
-          expect(console.warn).toBeCalledTimes(23);
+          expect(console.warn).toBeCalledTimes(5);
         }
       ));
   });
