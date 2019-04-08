@@ -39,9 +39,6 @@
   "keywords": [
     "json"
   ],
-  "peerDependencies": {
-    "webpack": "^2.0.0 || ^3.0.0 || ^4.0.0"
-  },
   "devDependencies": {
     "@babel/cli": "^7.4.3",
     "@babel/core": "^7.4.3",
