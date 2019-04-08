@@ -211,7 +211,7 @@ const config = getJsonConfigs.sync(scopes, { env, configDir })
 
 So you may use configuration object in app, for instance, put it to DI container.
 
-[fullstack-config-loader] uses 'get-json-conig' to load configuration object to bundle via [webpack].
+[app-json-config-loader] uses 'get-json-conig' to load configuration object to bundle via [webpack].
 
 ## License
 
@@ -229,6 +229,6 @@ So you may use configuration object in app, for instance, put it to DI container
 [cover-url]: https://codecov.io/gh/webpack-contrib/get-json-config
 [chat]: https://img.shields.io/badge/gitter-webpack%2Fwebpack-brightgreen.svg
 [chat-url]: https://gitter.im/webpack/webpack -->
-[fullstack-config-loader]: https://github.com/unmyke/fullstack-config-loader
+[app-json-config-loader]: https://github.com/unmyke/app-json-config-loader
 [webpack]: https://webpack.js.org/
 [dotenv]: https://github.com/motdotla/dotenv
