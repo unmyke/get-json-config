@@ -15,10 +15,10 @@ Historically app configuraton store in environment variables. If your configurat
 
 But using `.env`-files has drawbacks to:
 
-* flat structure of valiable names, your scoped nature of configuration has to be injected in variable name
-* different set of configuration values separate by environment names
-* values can store only `String`
-* imperative way of contructing config inside app by manual parsing `process.env`
+- flat structure of valiable names, your scoped nature of configuration has to be injected in variable name
+- different set of configuration values separate by environment names
+- values can store only `String`
+- imperative way of contructing config inside app by manual parsing `process.env`
 
 Another point of vision to store configuration values in `json`-files. By using `get-json-config` configuration separate by scopes, and every scope have sets of values separated by environment names.
 
@@ -27,13 +27,13 @@ Another point of vision to store configuration values in `json`-files. By using 
 {
   "production": {
     "name": "production",
-    "hostname": db.exapmle.com,
-    "port": 27017,
+    "hostname": "db.exapmle.com",
+    "port": 27017
   },
   "development": {
     "name": "development",
-    "hostname": loaclhost,
-    "port": 27017,
+    "hostname": "localhost",
+    "port": 27017
   }
 }
 ```
@@ -42,12 +42,12 @@ Another point of vision to store configuration values in `json`-files. By using 
 // config/http.json
 {
   "production": {
-    "hostname": exapmle.com,
-    "port": 80,
+    "hostname": "exapmle.com",
+    "port": 80
   },
   "development": {
-    "hostname": loaclhost,
-    "port": 8080,
+    "hostname": "localhost",
+    "port": 8080
   }
 }
 ```
@@ -105,11 +105,11 @@ Default: `process.env.NODE_ENV || 'development'`
 
 ```json
 {
-  development: {
-    foo: 'bar',
+  "development": {
+    "foo": "bar"
   },
-  production: {
-    foo: 'foo'
+  "production": {
+    "foo": "foo"
   }
 }
 ```
@@ -229,6 +229,7 @@ So you may use configuration object in app, for instance, put it to DI container
 [cover-url]: https://codecov.io/gh/webpack-contrib/get-json-config
 [chat]: https://img.shields.io/badge/gitter-webpack%2Fwebpack-brightgreen.svg
 [chat-url]: https://gitter.im/webpack/webpack -->
+
 [app-json-config-loader]: https://github.com/unmyke/app-json-config-loader
 [webpack]: https://webpack.js.org/
 [dotenv]: https://github.com/motdotla/dotenv
