@@ -1,6 +1,6 @@
 {
   "name": "get-json-config",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Configutaion getter stored in json-files",
   "repository": "https://github.com/unmyke/get-json-config.git",
   "author": "unmyke <unmyke@gmail.com>",
