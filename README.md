@@ -65,19 +65,19 @@ Only environment variable you may to use is standard NODE_ENV (or you have to pa
 Returns: `Promise`
 
 Takes list of `json`-files names (sections of final configuration object) and
-returns Promise resolves to object { `config`, `files` }. If names is not passed it returns all scopes in directory.
+returns Promise resolves to object { `config`, `files` }. If scope names is not passed it returns all scopes in directory.
 
 #### `config`
 
 Type: `object`
 
-Contains scoped names properties with values equal `'scope-name'.json`. If `'scope-name'.json` file not found, property will be empty `Object`.
+Contains scoped name properties with values equal `'scope-name'.json`. If `'scope-name'.json` file not found, property will be empty `Object`.
 
 #### `files`
 
 Type: `Array`
 
-Contains list of relative file names that was found while including to `config`;
+Contains list of relative file names that was found while including to `config`.
 
 ### `getJsonConfig.sync([scopes, options])`
 
@@ -87,9 +87,7 @@ Similar behavior only in synchronous way.
 
 Type: `[String]`
 
-Default: `[]`
-
-Array of `json`-file names (scopes), that contains nested configuration section.
+Array of `json`-file names (scopes), that contains nested configuration section. If not passed will return all config in [`options.dir`].
 
 ### `options`
 
