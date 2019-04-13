@@ -1,4 +1,4 @@
-const full = ['api', 'web', 'database', 'logging'];
+const full = ['api', 'database', 'logging', 'web'];
 const partial = ['api', 'web'];
 const nonexistent = ['non', 'existent'];
 const partialWithNonexistent = [...partial, ...nonexistent];

@@ -24,6 +24,23 @@ describe('getJsonConfig', () => {
       console.warn = warn;
     });
 
+    context('takes no scope names', () => {
+      test('should return all configs', () =>
+        Promise.all([
+          getConfig({ dir }),
+          getConfig({ env: envs.TEST, dir }),
+          getConfig({ env: envs.DEV, dir }),
+          getConfig({ env: envs.PROD, dir }),
+        ]).then(([defaultConfig, testConfig, devConfig, prodConfig]) => {
+          expect(defaultConfig).toEqual(
+            expectedConfigs.full[process.env.NODE_ENV]
+          );
+          expect(testConfig).toEqual(expectedConfigs.full[envs.TEST]);
+          expect(devConfig).toEqual(expectedConfigs.full[envs.DEV]);
+          expect(prodConfig).toEqual(expectedConfigs.full[envs.PROD]);
+        }));
+    });
+
     context('config directory exist', () => {
       context('takes all json config file names', () => {
         test('should return object contains configs from all json files per environment', () =>
