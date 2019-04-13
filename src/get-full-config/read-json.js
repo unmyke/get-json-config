@@ -1,4 +1,4 @@
-const { readFile } = require('fs');
+const { readFile, readFileSync } = require('fs');
 
 const {
   getError,
@@ -34,5 +34,29 @@ const readJson = (file) =>
       }
     });
   });
+
+readJson.sync = (file) => {
+  try {
+    const json = readFileSync(file);
+
+    return JSON.parse(json);
+  } catch (err) {
+    if (err) {
+      if (err.code === 'ENOENT')
+        throw getError(
+          getHandledErrorMesage(`File ${file} doesn't extist`),
+          SCOPE_NOT_FOUND
+        );
+      if (err instanceof SyntaxError) {
+        throw getError(
+          getHandledErrorMesage(`File ${file} has invalid format`),
+          SCOPE_INVALID
+        );
+      }
+
+      throw (getError('Unhadled file system error'), FS_ERROR);
+    }
+  }
+};
 
 module.exports = readJson;
