@@ -81,9 +81,7 @@ Contains list of relative file names that was found while including to `config`;
 
 ### `getJsonConfig.sync([scopes, options])`
 
-#### **Not implemented yet**
-
-Similar behavior only synchronous way.
+Similar behavior only in synchronous way.
 
 ### `scopes`
 
