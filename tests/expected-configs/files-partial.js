@@ -1,1 +1,1 @@
-module.exports = ['./test/config/api.json', './test/config/web.json'];
+module.exports = ['./tests/config/api.json', './tests/config/web.json'];

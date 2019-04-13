@@ -1,6 +1,6 @@
 module.exports = [
-  './test/config/api.json',
-  './test/config/web.json',
-  './test/config/database.json',
-  './test/config/logging.json',
+  './tests/config/api.json',
+  './tests/config/web.json',
+  './tests/config/database.json',
+  './tests/config/logging.json',
 ];
