@@ -2,6 +2,7 @@ const getConfig = require('../src');
 
 const configSets = require('./config-sets');
 const expectedConfigs = require('./expected-configs');
+const addModeToExpectedConfig = require('./add-mode-to-expected-config');
 
 const warn = console.warn;
 
@@ -33,11 +34,20 @@ describe('getJsonConfig', () => {
           getConfig({ env: envs.PROD, dir }),
         ]).then(([defaultConfig, testConfig, devConfig, prodConfig]) => {
           expect(defaultConfig).toEqual(
-            expectedConfigs.full[process.env.NODE_ENV]
+            addModeToExpectedConfig(
+              expectedConfigs.full[process.env.NODE_ENV],
+              process.env.NODE_ENV
+            )
           );
-          expect(testConfig).toEqual(expectedConfigs.full[envs.TEST]);
-          expect(devConfig).toEqual(expectedConfigs.full[envs.DEV]);
-          expect(prodConfig).toEqual(expectedConfigs.full[envs.PROD]);
+          expect(testConfig).toEqual(
+            addModeToExpectedConfig(expectedConfigs.full[envs.TEST], envs.TEST)
+          );
+          expect(devConfig).toEqual(
+            addModeToExpectedConfig(expectedConfigs.full[envs.DEV], envs.DEV)
+          );
+          expect(prodConfig).toEqual(
+            addModeToExpectedConfig(expectedConfigs.full[envs.PROD], envs.PROD)
+          );
         }));
     });
 
@@ -51,11 +61,26 @@ describe('getJsonConfig', () => {
             getConfig(configSets.full, { env: envs.PROD, dir }),
           ]).then(([defaultConfig, testConfig, devConfig, prodConfig]) => {
             expect(defaultConfig).toEqual(
-              expectedConfigs.full[process.env.NODE_ENV]
+              addModeToExpectedConfig(
+                expectedConfigs.full[process.env.NODE_ENV],
+                process.env.NODE_ENV
+              )
             );
-            expect(testConfig).toEqual(expectedConfigs.full[envs.TEST]);
-            expect(devConfig).toEqual(expectedConfigs.full[envs.DEV]);
-            expect(prodConfig).toEqual(expectedConfigs.full[envs.PROD]);
+            expect(testConfig).toEqual(
+              addModeToExpectedConfig(
+                expectedConfigs.full[envs.TEST],
+                envs.TEST
+              )
+            );
+            expect(devConfig).toEqual(
+              addModeToExpectedConfig(expectedConfigs.full[envs.DEV], envs.DEV)
+            );
+            expect(prodConfig).toEqual(
+              addModeToExpectedConfig(
+                expectedConfigs.full[envs.PROD],
+                envs.PROD
+              )
+            );
           }));
       });
 
@@ -77,16 +102,28 @@ describe('getJsonConfig', () => {
             }),
           ]).then(([defaultConfig, testConfig, devConfig, prodConfig]) => {
             expect(defaultConfig).toEqual(
-              expectedConfigs.fullWithNonexistent[process.env.NODE_ENV]
+              addModeToExpectedConfig(
+                expectedConfigs.fullWithNonexistent[process.env.NODE_ENV],
+                process.env.NODE_ENV
+              )
             );
             expect(testConfig).toEqual(
-              expectedConfigs.fullWithNonexistent[envs.TEST]
+              addModeToExpectedConfig(
+                expectedConfigs.fullWithNonexistent[envs.TEST],
+                envs.TEST
+              )
             );
             expect(devConfig).toEqual(
-              expectedConfigs.fullWithNonexistent[envs.DEV]
+              addModeToExpectedConfig(
+                expectedConfigs.fullWithNonexistent[envs.DEV],
+                envs.DEV
+              )
             );
             expect(prodConfig).toEqual(
-              expectedConfigs.fullWithNonexistent[envs.PROD]
+              addModeToExpectedConfig(
+                expectedConfigs.fullWithNonexistent[envs.PROD],
+                envs.PROD
+              )
             );
 
             expect(console.warn).toBeCalledTimes(12);
@@ -102,11 +139,29 @@ describe('getJsonConfig', () => {
             getConfig(configSets.partial, { env: envs.PROD, dir }),
           ]).then(([defaultConfig, testConfig, devConfig, prodConfig]) => {
             expect(defaultConfig).toEqual(
-              expectedConfigs.partial[process.env.NODE_ENV]
+              addModeToExpectedConfig(
+                expectedConfigs.partial[process.env.NODE_ENV],
+                process.env.NODE_ENV
+              )
             );
-            expect(testConfig).toEqual(expectedConfigs.partial[envs.TEST]);
-            expect(devConfig).toEqual(expectedConfigs.partial[envs.DEV]);
-            expect(prodConfig).toEqual(expectedConfigs.partial[envs.PROD]);
+            expect(testConfig).toEqual(
+              addModeToExpectedConfig(
+                expectedConfigs.partial[envs.TEST],
+                envs.TEST
+              )
+            );
+            expect(devConfig).toEqual(
+              addModeToExpectedConfig(
+                expectedConfigs.partial[envs.DEV],
+                envs.DEV
+              )
+            );
+            expect(prodConfig).toEqual(
+              addModeToExpectedConfig(
+                expectedConfigs.partial[envs.PROD],
+                envs.PROD
+              )
+            );
           }));
       });
 
@@ -118,10 +173,21 @@ describe('getJsonConfig', () => {
             getConfig(configSets.nonexistent, { env: envs.DEV, dir }),
             getConfig(configSets.nonexistent, { env: envs.PROD, dir }),
           ]).then(([defaultConfig, testConfig, devConfig, prodConfig]) => {
-            expect(defaultConfig).toEqual(expectedConfigs.nonexistent);
-            expect(testConfig).toEqual(expectedConfigs.nonexistent);
-            expect(devConfig).toEqual(expectedConfigs.nonexistent);
-            expect(prodConfig).toEqual(expectedConfigs.nonexistent);
+            expect(defaultConfig).toEqual(
+              addModeToExpectedConfig(
+                expectedConfigs.nonexistent,
+                process.env.NODE_ENV
+              )
+            );
+            expect(testConfig).toEqual(
+              addModeToExpectedConfig(expectedConfigs.nonexistent, envs.TEST)
+            );
+            expect(devConfig).toEqual(
+              addModeToExpectedConfig(expectedConfigs.nonexistent, envs.DEV)
+            );
+            expect(prodConfig).toEqual(
+              addModeToExpectedConfig(expectedConfigs.nonexistent, envs.PROD)
+            );
 
             expect(console.warn).toBeCalledTimes(12);
           }));
@@ -145,16 +211,28 @@ describe('getJsonConfig', () => {
             }),
           ]).then(([defaultConfig, testConfig, devConfig, prodConfig]) => {
             expect(defaultConfig).toEqual(
-              expectedConfigs.partialWithNonexistent[process.env.NODE_ENV]
+              addModeToExpectedConfig(
+                expectedConfigs.partialWithNonexistent[process.env.NODE_ENV],
+                process.env.NODE_ENV
+              )
             );
             expect(testConfig).toEqual(
-              expectedConfigs.partialWithNonexistent[envs.TEST]
+              addModeToExpectedConfig(
+                expectedConfigs.partialWithNonexistent[envs.TEST],
+                envs.TEST
+              )
             );
             expect(devConfig).toEqual(
-              expectedConfigs.partialWithNonexistent[envs.DEV]
+              addModeToExpectedConfig(
+                expectedConfigs.partialWithNonexistent[envs.DEV],
+                envs.DEV
+              )
             );
             expect(prodConfig).toEqual(
-              expectedConfigs.partialWithNonexistent[envs.PROD]
+              addModeToExpectedConfig(
+                expectedConfigs.partialWithNonexistent[envs.PROD],
+                envs.PROD
+              )
             );
 
             expect(console.warn).toBeCalledTimes(12);
@@ -214,17 +292,26 @@ describe('getJsonConfig', () => {
       context('takes all json config file names', () => {
         test('should return object contains configs from all json files per environment', () => {
           expect(getConfig.sync(configSets.full, { dir })).toEqual(
-            expectedConfigs.full[process.env.NODE_ENV]
+            addModeToExpectedConfig(
+              expectedConfigs.full[process.env.NODE_ENV],
+              process.env.NODE_ENV
+            )
           );
           expect(
             getConfig.sync(configSets.full, { env: envs.TEST, dir })
-          ).toEqual(expectedConfigs.full[envs.TEST]);
+          ).toEqual(
+            addModeToExpectedConfig(expectedConfigs.full[envs.TEST], envs.TEST)
+          );
           expect(
             getConfig.sync(configSets.full, { env: envs.DEV, dir })
-          ).toEqual(expectedConfigs.full[envs.DEV]);
+          ).toEqual(
+            addModeToExpectedConfig(expectedConfigs.full[envs.DEV], envs.DEV)
+          );
           expect(
             getConfig.sync(configSets.full, { env: envs.PROD, dir })
-          ).toEqual(expectedConfigs.full[envs.PROD]);
+          ).toEqual(
+            addModeToExpectedConfig(expectedConfigs.full[envs.PROD], envs.PROD)
+          );
         });
       });
 
@@ -232,25 +319,45 @@ describe('getJsonConfig', () => {
         test('should return object contains configs from all json files and with props with empty object for nonexistent names per environment', () => {
           expect(
             getConfig.sync(configSets.fullWithNonexistent, { dir })
-          ).toEqual(expectedConfigs.fullWithNonexistent[process.env.NODE_ENV]);
+          ).toEqual(
+            addModeToExpectedConfig(
+              expectedConfigs.fullWithNonexistent[process.env.NODE_ENV],
+              process.env.NODE_ENV
+            )
+          );
           expect(
             getConfig.sync(configSets.fullWithNonexistent, {
               env: envs.TEST,
               dir,
             })
-          ).toEqual(expectedConfigs.fullWithNonexistent[envs.TEST]);
+          ).toEqual(
+            addModeToExpectedConfig(
+              expectedConfigs.fullWithNonexistent[envs.TEST],
+              envs.TEST
+            )
+          );
           expect(
             getConfig.sync(configSets.fullWithNonexistent, {
               env: envs.DEV,
               dir,
             })
-          ).toEqual(expectedConfigs.fullWithNonexistent[envs.DEV]);
+          ).toEqual(
+            addModeToExpectedConfig(
+              expectedConfigs.fullWithNonexistent[envs.DEV],
+              envs.DEV
+            )
+          );
           expect(
             getConfig.sync(configSets.fullWithNonexistent, {
               env: envs.PROD,
               dir,
             })
-          ).toEqual(expectedConfigs.fullWithNonexistent[envs.PROD]);
+          ).toEqual(
+            addModeToExpectedConfig(
+              expectedConfigs.fullWithNonexistent[envs.PROD],
+              envs.PROD
+            )
+          );
 
           expect(console.warn).toBeCalledTimes(12);
         });
@@ -259,34 +366,58 @@ describe('getJsonConfig', () => {
       context('takes partial json config file names', () => {
         test('should return object contains configs from partial json files per environment', () => {
           expect(getConfig.sync(configSets.partial, { dir })).toEqual(
-            expectedConfigs.partial[process.env.NODE_ENV]
+            addModeToExpectedConfig(
+              expectedConfigs.partial[process.env.NODE_ENV],
+              process.env.NODE_ENV
+            )
           );
           expect(
             getConfig.sync(configSets.partial, { env: envs.TEST, dir })
-          ).toEqual(expectedConfigs.partial[envs.TEST]);
+          ).toEqual(
+            addModeToExpectedConfig(
+              expectedConfigs.partial[envs.TEST],
+              envs.TEST
+            )
+          );
           expect(
             getConfig.sync(configSets.partial, { env: envs.DEV, dir })
-          ).toEqual(expectedConfigs.partial[envs.DEV]);
+          ).toEqual(
+            addModeToExpectedConfig(expectedConfigs.partial[envs.DEV], envs.DEV)
+          );
           expect(
             getConfig.sync(configSets.partial, { env: envs.PROD, dir })
-          ).toEqual(expectedConfigs.partial[envs.PROD]);
+          ).toEqual(
+            addModeToExpectedConfig(
+              expectedConfigs.partial[envs.PROD],
+              envs.PROD
+            )
+          );
         });
       });
 
       context('takes nonexistent json config file names', () => {
         test('should return object contains props as passed names with empty object per environment', () => {
           expect(getConfig.sync(configSets.nonexistent, { dir })).toEqual(
-            expectedConfigs.nonexistent
+            addModeToExpectedConfig(
+              expectedConfigs.nonexistent,
+              process.env.NODE_ENV
+            )
           );
           expect(
             getConfig.sync(configSets.nonexistent, { env: envs.TEST, dir })
-          ).toEqual(expectedConfigs.nonexistent);
+          ).toEqual(
+            addModeToExpectedConfig(expectedConfigs.nonexistent, envs.TEST)
+          );
           expect(
             getConfig.sync(configSets.nonexistent, { env: envs.DEV, dir })
-          ).toEqual(expectedConfigs.nonexistent);
+          ).toEqual(
+            addModeToExpectedConfig(expectedConfigs.nonexistent, envs.DEV)
+          );
           expect(
             getConfig.sync(configSets.nonexistent, { env: envs.PROD, dir })
-          ).toEqual(expectedConfigs.nonexistent);
+          ).toEqual(
+            addModeToExpectedConfig(expectedConfigs.nonexistent, envs.PROD)
+          );
 
           expect(console.warn).toBeCalledTimes(12);
         });
@@ -297,26 +428,44 @@ describe('getJsonConfig', () => {
           expect(
             getConfig.sync(configSets.partialWithNonexistent, { dir })
           ).toEqual(
-            expectedConfigs.partialWithNonexistent[process.env.NODE_ENV]
+            addModeToExpectedConfig(
+              expectedConfigs.partialWithNonexistent[process.env.NODE_ENV],
+              process.env.NODE_ENV
+            )
           );
           expect(
             getConfig.sync(configSets.partialWithNonexistent, {
               env: envs.TEST,
               dir,
             })
-          ).toEqual(expectedConfigs.partialWithNonexistent[envs.TEST]);
+          ).toEqual(
+            addModeToExpectedConfig(
+              expectedConfigs.partialWithNonexistent[envs.TEST],
+              envs.TEST
+            )
+          );
           expect(
             getConfig.sync(configSets.partialWithNonexistent, {
               env: envs.DEV,
               dir,
             })
-          ).toEqual(expectedConfigs.partialWithNonexistent[envs.DEV]);
+          ).toEqual(
+            addModeToExpectedConfig(
+              expectedConfigs.partialWithNonexistent[envs.DEV],
+              envs.DEV
+            )
+          );
           expect(
             getConfig.sync(configSets.partialWithNonexistent, {
               env: envs.PROD,
               dir,
             })
-          ).toEqual(expectedConfigs.partialWithNonexistent[envs.PROD]);
+          ).toEqual(
+            addModeToExpectedConfig(
+              expectedConfigs.partialWithNonexistent[envs.PROD],
+              envs.PROD
+            )
+          );
 
           expect(console.warn).toBeCalledTimes(12);
         });
