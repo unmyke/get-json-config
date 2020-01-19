@@ -1,97 +1,178 @@
-<!-- [![npm][npm]][npm-url]
-[![node][node]][node-url]
-[![deps][deps]][deps-url]
-[![tests][tests]][tests-url]
-[![chat][chat]][chat-url] -->
-
 # get-json-config
 
-Utility for getting config object stored in `json`-files. Use as alternative to
-store app configuration in `.env`-files.
+Utility to read app config stored in JSON-files as alternative of usage `.env`-files.
 
 ## Why
 
-Historically app configuraton store in environment variables. If your configuration values have to be scoped (for instance, `mongodb` and `experess` hostname and port) you can name the variables by including scope name (for instance, prefex every value with scope name like `DB_HOTS`, `DB_PORT`, `HTTP_HOST`, `HTTP_PORT`). When number of variables starts grow you may prefer use `.env`-files for different separated by evnironment name (`.env.production`, `.env.development`, `.env.test`) and load it by [dotenv] or another tools instead to pass all environment variable directly in terminal or line it in `script` section of `package.json`.
+According to [The Twelve-Factor App](https://12factor.net/en/config) app config should not be hardcoded, most convenient option is parse config from environment variables inside app. Thus, the convenience of app configuring for various environments is achieved, which means profit for app CI/CD. Every app needs to be configured, so every time `config` function from [dotenv](https://github.com/motdotla/dotenv#readme) package helps me to get object with environment variables.
 
-But using `.env`-files has drawbacks to:
+Nevertheless, this object had to be trasformed to specific for app shape: one app needs to get the config of the database server and api-server, when other setups two external services and ElasticSearch server). Usually, parsed from object with environment variables config object is a dictionary, that contains module configs. Why not initially store configs in this form? And the `json`-files are best suited for this.
 
-- flat structure of valiable names, your scoped nature of configuration has to be injected in variable name
-- different set of configuration values separate by environment names
-- values can store only `String`
-- imperative way of contructing config inside app by manual parsing `process.env`
+### Too verbose naming for environment variables
 
-Another point of vision to store configuration values in `json`-files. By using `get-json-config` configuration separate by scopes, and every scope have sets of values separated by environment names.
+When app configs by module specific params for instance, db, endpoint, third-party services in a lot, you have to name environment variables same way.
+
+```shell
+# .env
+
+# Database config
+...
+DB_HOST=db.example.com
+DB_PORT=5432
+DB_USERNAME=dbuser
+DB_PASSWORD=dbpassword
+...
+
+# Endpoint config
+...
+ENDPOINT_HOST=example.com
+ENDPOINT_PORT=80
+...
+
+# External service config
+...
+EXT_SERVICE_TOKEN=secret_token
+...
+```
+
+Split config into "scoped" `json`-files (app module configs) simplifies the naming of conf params. Such a `json`-file can literally fits the shape of config of module you used .
 
 ```json
-// config/database.json
+// database.json
+{
+  ...
+  "host": "db.example.com",
+  "port": 5432,
+  "username": "dbuser",
+  "password": "dbpassword",
+  ...
+}
+
+// endpoint.json
+{
+  ...
+  "host": "example.com",
+  "port ": 80
+  ...
+}
+
+// ext-service.json
+{
+  ...
+  "token": "secret_token"
+  ...
+}
+```
+
+#### Configs separates by environment instead of scopes
+
+To load app configs using `dotenv`, you split configs into`.env` files for different environments. As the number of conf params increases, adding new params to different .env files becomes inconvenient.
+
+`get-json-config` separates different environment configs inside of module config `json`-file.
+
+Example of `.env`-files:
+
+```shell
+# .env
+DB_HOST=db.company.org
+DB_NAME=production
+DB_USERNAME=dbuser
+DB_PASSWORD=dbpassword
+DB_PORT=5432
+ENDPOINT_HOST=company.org
+ENDPOINT_PORT=3000
+ENDPOINT_GRAPHQL_URI=/graphql
+
+# .env.developmnet
+DB_HOST=localhost
+DB_NAME=test
+DB_USERNAME=dbuser
+DB_PASSWORD=dbpassword
+DB_PORT=6432
+ENDPOINT_HOST=localhost
+ENDPOINT_PORT=4000
+ENDPOINT_GRAPHQL_URI=/graphql/develop
+```
+
+`json`-files analog:
+
+```json
+// configs/.database.json
 {
   "production": {
+    "host": "db.company.org",
     "name": "production",
-    "hostname": "db.exapmle.com",
-    "port": 27017
+    "username": "dbuser",
+    "password": "dbpassword",
+    "port": 5432
   },
   "development": {
+    "host": "localhost",
     "name": "development",
-    "hostname": "localhost",
-    "port": 27017
+    "username": "dbuser",
+    "password": "dbpassword",
+    "port": 6432
   }
 }
-```
-
-```json
-// config/http.json
+// configs/endpoint.json
 {
   "production": {
-    "hostname": "exapmle.com",
-    "port": 80
+    "endpointHost": "company. org",
+    "endpointPort": 3000,
+    "endpointGraphqlUri": "/graphql"
   },
   "development": {
-    "hostname": "localhost",
-    "port": 8080
+    "endpointHost": "localhost",
+    "endpointPort": 4000,
+    "endpointGraphqlUri": "/graphql/develop"
   }
 }
 ```
 
-Using `'scope-name'.json` you may have deep nested values inside scope, you get all environment-depending value sets in one file, if you need to add some variables in scope there is no need to switch between `.env.'envname'` files.
+Thus, new conf param adds inside only one file.
 
-Also, there is a security problem to share scopes of configuration between different parts of you app, for instance, your app have client and server parts need to have access to values in web-server scope, but client must not includes values of database scope, because client code will be send to browser. By using environment variable you manualy parse `process.env` to get only needed values. By using `get-json-config` you pass list of scopes and get configuration object, contained only values needed (your may have 'common', 'server' and 'client' scopes, but more declarative divide you scopes by purpose and you must contorol what values contains in scopes shared beteewn client and server parts).
+### Flat config structure of `env`-file
 
-Only environment variable you may to use is standard NODE_ENV (or you have to pass it's value as an option in call of `get-json-config`).
+The `.env`-file is a list of environment variables, which makes it impossible to have a nested params. If the config object of the scope module has nested conf params, then a manual, iterative approach is required when parsing the environment variables to construct config object. The `json`-file have no such a problem at all.
 
-## API
+## Usage
 
-### `getJsonConfig([scopes, options])`
+Use standard NODE_ENV only (or pass { env } name to `get-json-config`).
+
+### API
+
+#### `getJsonConfig([scopes, options])`
 
 Returns: `Promise`
 
-Takes list of `json`-files names (sections of final configuration object) and
+Takes list of `json`-files names (sections of final config object) and
 returns Promise resolves to object { `config`, `files` }. If scope names is not passed it returns all scopes in directory.
 
-#### `config`
+##### `config`
 
 Type: `object`
 
 Contains scoped name properties with values equal `'scope-name'.json`. If `'scope-name'.json` file not found, property will be empty `Object`.
 
-#### `files`
+##### `files`
 
 Type: `Array`
 
 Contains list of relative file names that was found while including to `config`.
 
-### `getJsonConfig.sync([scopes, options])`
+#### `getJsonConfig.sync([scopes, options])`
 
 Similar behavior only in synchronous way.
 
-### `scopes`
+#### `scopes`
 
 Type: `[String]`
 
-Array of `json`-file names (scopes), that contains nested configuration section. If not passed will return all config in [`options.dir`].
+Array of `json`-file names (scopes), that contains nested config section. If not passed will return all config in [`options.dir`].
 
-### `options`
+#### `options`
 
-#### `options.env`
+##### `options.env`
 
 Type: `String`
 
@@ -110,13 +191,13 @@ Default: `process.env.NODE_ENV || 'development'`
 }
 ```
 
-#### `options.dir`
+##### `options.dir`
 
 Type: `String`
 
 Default: `./config`
 
-Relative path to directory contains configuration `json`-files.
+Relative path to directory contains config `json`-files.
 
 ## Getting Started
 
@@ -205,26 +286,13 @@ getJsonConfigs(scopes, { env, configDir })
 const config = getJsonConfigs.sync(scopes, { env, configDir })
 ```
 
-So you may use configuration object in app, for instance, put it to DI container.
+So you may use config object in app, for instance, put it to DI container.
 
-[app-json-config-loader] uses 'get-json-conig' to load configuration object to bundle via [webpack].
+[app-json-config-loader] uses `get-json-config` to load config object to bundle via [webpack].
 
 ## License
 
 ### [MIT](./LICENSE)
-
-<!-- [npm]: https://img.shields.io/npm/v/get-json-config.svg
-[npm-url]: https://npmjs.com/package/get-json-config
-[node]: https://img.shields.io/node/v/get-json-config.svg
-[node-url]: https://nodejs.org
-[deps]: https://david-dm.org/webpack-contrib/get-json-config.svg
-[deps-url]: https://david-dm.org/webpack-contrib/get-json-config
-[tests]: https://img.shields.io/circleci/project/github/webpack-contrib/get-json-config.svg
-[tests-url]: https://circleci.com/gh/webpack-contrib/get-json-config
-[cover]: https://codecov.io/gh/webpack-contrib/get-json-config/branch/master/graph/badge.svg
-[cover-url]: https://codecov.io/gh/webpack-contrib/get-json-config
-[chat]: https://img.shields.io/badge/gitter-webpack%2Fwebpack-brightgreen.svg
-[chat-url]: https://gitter.im/webpack/webpack -->
 
 [app-json-config-loader]: https://github.com/unmyke/app-json-config-loader
 [webpack]: https://webpack.js.org/
